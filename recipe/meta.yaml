@@ -36,7 +36,7 @@ requirements:
     # - typer >=0.12.4
     - uvicorn >=0.23.1    # [not emscripten]
     - jsonschema >=4.20.0
-    - pywin32-on-windows >=310  # [win]
+    - pywin32  # [win]
 
 test:
   imports:
