@@ -10,9 +10,9 @@ source:
   sha256: d1d0bdeb09e4b17c1a72b356248bf3baf75ab10db7008ef865c4afbeb0eb810e
 
 build:
-  skip: true  # [py<310 or not win]
-  # entry_points:
-  #   - mcp = mcp.cli:app
+  skip: true  # [py<310]
+  entry_points:
+    - mcp = mcp.cli:app
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
   number: 0
 
@@ -44,7 +44,7 @@ test:
     # - mcp --help
   requires:
     - pip
-    - python
+    - typer
 
 about:
   home: https://modelcontextprotocol.io/
