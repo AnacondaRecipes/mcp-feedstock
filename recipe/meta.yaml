@@ -45,7 +45,7 @@ test:
     - mcp
   commands:
     - pip check
-    # - mcp --help
+    - mcp --help
   requires:
     - pip
     - typer
