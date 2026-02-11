@@ -36,11 +36,11 @@ requirements:
     - uvicorn >=0.31.1    # [not emscripten]
     - jsonschema >=4.20.0
     - pywin32 >=310  # [win]
-    # cli
-    - typer >=0.16.0
-    - python-dotenv >=1.0.0
   run_constrained:
     - websockets >=15.0.1
+    # cli
+    - python-dotenv >=1.0.0
+    - typer >=0.16.0
 
 test:
   imports:
@@ -50,6 +50,8 @@ test:
     - mcp --help
   requires:
     - pip
+    - python-dotenv
+    - typer
 
 about:
   home: https://modelcontextprotocol.io/
