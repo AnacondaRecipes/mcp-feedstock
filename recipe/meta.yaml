@@ -1,5 +1,5 @@
 {% set name = "mcp" %}
-{% set version = "1.12.1" %}
+{% set version = "1.26.0" %}
 
 package:
   name: {{ name|lower }}
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/mcp-{{ version }}.tar.gz
-  sha256: d1d0bdeb09e4b17c1a72b356248bf3baf75ab10db7008ef865c4afbeb0eb810e
+  sha256: db6e2ef491eecc1a0d93711a76f28dec2e05999f93afd48795da1c1137142c66
 
 build:
   skip: true  # [py<310]
@@ -24,30 +24,33 @@ requirements:
   run:
     - python
     - anyio >=4.5
-    - httpx >=0.27
+    - httpx >=0.27.1
     - httpx-sse >=0.4
-    - pydantic >=2.8.0,<3.0.0
+    - pydantic >=2.11.0,<3.0.0
     - pydantic-settings >=2.5.2
+    - pyjwt >=2.10.1
     - python-multipart >=0.0.9
     - rich >=13.9.4
     - sse-starlette >=1.6.1
     - starlette >=0.27
-    - uvicorn >=0.23.1    # [not emscripten]
+    - uvicorn >=0.31.1    # [not emscripten]
     - jsonschema >=4.20.0
     - pywin32 >=310  # [win]
   run_constrained:
-    - python-dotenv >=1.0.0
-    - rich >=13.9.4
     - websockets >=15.0.1
+    # cli
+    - python-dotenv >=1.0.0
+    - typer >=0.16.0
 
 test:
   imports:
     - mcp
   commands:
     - pip check
-    # - mcp --help
+    - mcp --help
   requires:
     - pip
+    - python-dotenv
     - typer
 
 about:
