@@ -1,5 +1,5 @@
 {% set name = "mcp" %}
-{% set version = "2.0.0" %}
+{% set version = "2.3.0" %}
 
 package:
   name: {{ name }}
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 0f440e735c13ece8bb19bc62cf0b86f4313448432fbb77d35e14034f4e050728
+  sha256: 8b147a50441cf059dc88c684e0aeed3687f0aa0f39c6cde7b90330effd2b34d8
 
 build:
   skip: true  # [py<310]
@@ -19,14 +19,14 @@ build:
 requirements:
   host:
     - python
+    - pip
     - hatchling
     - uv-dynamic-versioning
-    - pip
   run:
     - python
-    - anyio>=4.10  # [py>=314]
+    - anyio >=4.10  # [py>=314]
     - anyio >=4.9  # [py<314]
-    - httpx2 >=2.5.0
+    - httpx2 >=2.10.0
     - mcp-types =={{ version }}
     - pydantic >=2.12.0
     - starlette >=0.48.0  # [py>=314]
@@ -49,128 +49,47 @@ requirements:
     - typer >=0.16.0
     - python-dotenv >=1.0.0
 
-# pytest_examples is not a part of main channel
-# E   ModuleNotFoundError: No module named 'pytest_examples'
-{% set ignored_tests = " --ignore=tests/client/test_input_required.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/client/test_stdio.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_apps.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_asgi.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_authorization.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_caching.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_client.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_client_callbacks.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_client_transports.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_completions.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_context.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_dependencies.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_deploy.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_elicitation.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_extensions.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_first_steps.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_handling_errors.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_identity_assertion.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_index.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_legacy_clients.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_lifespan.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_logging.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_lowlevel.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_media.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_middleware.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_mrtr.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_oauth_clients.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_opentelemetry.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_pagination.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_progress.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_prompts.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_protocol_versions.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_real_host.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_resources.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_run.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_sampling_and_roots.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_session_groups.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_structured_output.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_subscriptions.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_testing.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_tools.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_troubleshooting.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_uri_templates.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/docs_src/test_whats_new.py" %}
-{% set ignored_tests = ignored_tests + " --ignore=tests/test_examples.py" %}
-# stories is not a part of main channel
-# E   ModuleNotFoundError: No module named 'stories'
+# Only the upstream test suites whose dependencies are absent from the main
+# channel are ignored:
+#   - tests/test_examples.py imports pytest_examples (PyPI-only)
+#   - tests/examples imports stories (mcp-example-stories, PyPI-only)
+#   - tests/docs imports the docs toolchain (zensical, mkdocstrings, griffelib)
+{% set ignored_tests = " --ignore=tests/test_examples.py" %}
 {% set ignored_tests = ignored_tests + " --ignore=tests/examples" %}
-
-# look like test base are conflicts with source code base
-# object has no attribute '_meta'
-{% set disabled_tests = "--deselect=tests/client/test_client.py::test_client_with_simple_server" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/client/test_client.py::test_client_list_tools" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/client/test_client.py::test_client_call_tool" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/client/test_client.py::test_read_resource" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/client/test_client.py::test_get_prompt" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/client/test_client.py::test_client_list_resources_with_params" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/client/test_client.py::test_client_list_resource_templates" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/client/test_client.py::test_list_prompts" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/client/test_client.py::test_complete_with_prompt_reference" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/client/test_client.py::test_call_tool_auto_loop_dispatches_elicitation_then_returns_final_result" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/client/test_client.py::test_call_tool_auto_loop_dispatches_sampling_then_returns_final_result" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/client/test_client.py::test_call_tool_auto_loop_dispatches_list_roots_then_returns_final_result" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/client/test_client.py::test_get_prompt_auto_loop_resolves_input_required_via_callbacks" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/client/test_client.py::test_read_resource_auto_loop_resolves_input_required_via_callbacks" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/client/test_session_concurrency.py::test_concurrent_tool_calls_resolve_out_of_order_to_their_own_callers" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/docs_src/test_shape.py::test_every_example_is_included_by_a_page" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/docs_src/test_shape.py::test_every_included_path_exists" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/interaction/lowlevel/test_elicitation.py::test_elicit_form_accepted_content_returns_to_handler" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/interaction/lowlevel/test_elicitation.py::test_elicit_url_delivers_url_and_returns_accept_without_content" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/interaction/lowlevel/test_elicitation.py::test_a_mode_less_elicitation_request_is_treated_as_form_mode" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/interaction/lowlevel/test_sampling.py::test_create_message_round_trip" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/interaction/lowlevel/test_sampling.py::test_create_message_params_reach_callback" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/interaction/lowlevel/test_sampling.py::test_create_message_request_with_image_content_reaches_callback" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/interaction/lowlevel/test_sampling.py::test_create_message_with_list_valued_message_content_reaches_callback" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/interaction/lowlevel/test_sampling.py::test_create_message_request_with_audio_content_reaches_callback" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/interaction/lowlevel/test_tools.py::test_list_tools_optional_fields_round_trip" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/interaction/mcpserver/test_context.py::test_context_elicit_returns_typed_result" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/server/mcpserver/test_extension.py::test_additive_extension_registers_its_tool_and_resource" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/server/mcpserver/test_extension.py::test_extension_method_reachable_via_session_send_request" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/server/mcpserver/test_extension.py::test_pass_through_interceptor_leaves_tool_result_unchanged" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/server/mcpserver/test_extension.py::test_short_circuiting_interceptor_replaces_tool_result" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/server/mcpserver/test_extension.py::test_default_interceptor_passes_through_alongside_an_overriding_one" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/server/mcpserver/test_extension.py::test_an_interceptor_context_rewrite_does_not_change_the_tool_invocation" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/server/mcpserver/test_extension.py::test_version_pinned_method_is_served_at_an_allowed_version" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/server/mcpserver/test_extension.py::test_require_client_extension_passes_when_client_declared_it" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/server/mcpserver/test_server.py::TestServerResourceTemplates::test_resource_template_includes_mime_type" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/server/mcpserver/test_server.py::TestServerResourceMetadata::test_read_resource_returns_meta" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/server/mcpserver/test_server.py::TestContextInjection::test_resource_without_context" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/server/mcpserver/test_server.py::TestContextInjection::test_resource_context_custom_name" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/server/mcpserver/test_server.py::TestServerPrompts::test_list_prompts" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/server/mcpserver/test_server.py::TestServerPrompts::test_get_prompt" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/server/mcpserver/test_server.py::TestServerPrompts::test_get_prompt_with_docstring_description" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/server/mcpserver/test_server.py::TestServerPrompts::test_get_prompt_with_resource" %}
-{% set disabled_tests = disabled_tests + " --deselect=tests/server/test_apps.py::test_add_html_resource_serves_ui_resource_at_app_mime_type" %}
+{% set ignored_tests = ignored_tests + " --ignore=tests/docs" %}
 
 test:
   source_files:
     - tests
     - examples
+    - docs_src
+    - docs
+    - README.md
   imports:
     - mcp
   commands:
     - pip check
     - mcp --help
-    - pytest -vv tests {{ ignored_tests }} {{ disabled_tests }}
+    - pytest -vv tests {{ ignored_tests }}
   requires:
     - pip
     - pytest
     - python-dotenv
     - typer
     - logfire
-    - inline-snapshot
+    # inline-snapshot 0.35.3 compares `set` snapshots through the AST node of the
+    # snapshot expression, which is not found under pytest's assertion rewriting
+    # on python 3.10 only (python 3.11+ is unaffected); pin back for 3.10.
+    - inline-snapshot <0.35.3  # [py<311]
+    - inline-snapshot  # [py>=311]
     - trio
     - dirty-equals
     - coverage
     - tomli
+    - python-blockbuster
 
 about:
-  home: https://modelcontextprotocol.io/
+  home: https://modelcontextprotocol.io
   summary: The official Python SDK for Model Context Protocol servers and clients
   description: |
     The Model Context Protocol allows applications to provide context for LLMs in a standardized way, separating the concerns of providing context from the actual LLM interaction. This Python SDK implements the full MCP specification, making it easy to:
